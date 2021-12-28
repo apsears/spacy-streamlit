@@ -2,11 +2,25 @@ import streamlit as st
 import spacy
 import base64
 
-
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def load_model(name: str) -> spacy.language.Language:
     """Load a spaCy model."""
-    return spacy.load(name)
+    if name[:7] == 'stanza/':
+        import stanza
+        import spacy_stanza
+
+        stanza_model = name.split('/')[-1]
+        print('Selected stanza model:', stanza_model)
+        stanza.download(stanza_model)
+        return spacy_stanza.load_pipeline(stanza_model)
+    # if name[:8] == 'classla/':
+    #     import classla
+    #     classla_model = name.split('/')[-1]
+    #     print('Selected classla model:', classla_model)
+    #     classla.download(classla_model)
+    #     return classla.Pipeline(classla_model)
+    else:
+        return spacy.load(name)
 
 
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
